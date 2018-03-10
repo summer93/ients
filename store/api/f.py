@@ -320,8 +320,6 @@ def CG_F_Json(request):
         content = val.get('content', None)
         action = val.get('action', None)
 
-
-
         # 进行权限判断
         if general.functions.general_has_authority(request, '/store/CG_F/'):
 
@@ -333,7 +331,6 @@ def CG_F_Json(request):
                     Company__id=request.session['Company_id'],
                     Status__NO='002'
                 ).first().id
-
 
             try:
                 f = _registered_actions[action]

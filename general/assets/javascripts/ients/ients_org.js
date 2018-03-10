@@ -6375,7 +6375,7 @@ function user_profile() {
         var token = $.cookie('csrftoken');
 
 
-        var uuid = $('[name="uuid"]').val();
+        var User_id = $('[name="User_id"]').val();
         var Design_Rate = $('[name="Design_Rate"]').val();
         var Ui_Zoom = $('[name="Ui_Zoom"]').val();
         var Ui_Color = $('[name="Ui_Color"]').val();
@@ -6391,7 +6391,7 @@ function user_profile() {
 
             'action': 'ZG-R-01-03',
             'content': {
-                'uuid': uuid,
+                'User_id': User_id,
                 'Design_Rate': Design_Rate,
                 'Ui_Zoom': Ui_Zoom,
                 'Ui_Color': Ui_Color,

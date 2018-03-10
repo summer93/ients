@@ -153,6 +153,25 @@ def get_Order_content(ret, content):
     return views.table_StoreFormConPartLive(ret, content)
 
 
+def modify_content(action,content,Store_id):
+    '''
+
+    :param action:
+    :param content:
+    :param Store_id:
+    :return:
+    '''
+    if action == 'CG-T-01-01' or action == 'CG-T-01-03':
+        content['OriginStore_id'] = Store_id
+    elif action == 'CG-T-01-04' or action == 'CG-T-01-02':
+        content['Store_id'] = Store_id
+    else:
+        pass
+    return content
+
+
+
+
 def CG_T_Json(request):
     '''
     :param request: 
@@ -176,13 +195,7 @@ def CG_T_Json(request):
             else:
                 Store_id = Store_models.Store.objects.filter(Company__id=request.session['Company_id'],
                                                              Status__NO='002').first().id
-                if action == 'CG-T-01-01' or action == 'CG-T-01-03':
-                    content['OriginStore_id'] = Store_id
-                elif action == 'CG-T-01-04' or action == 'CG-T-01-02':
-                    content['Store_id'] = Store_id
-                else:
-                    pass
-
+                content = modify_content(action,content,Store_id)
             try:
                 f = _registered_actions[action]
             except KeyError as e:

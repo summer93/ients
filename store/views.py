@@ -12,7 +12,6 @@ from django.contrib.auth.decorators import login_required
 import general.common_variable
 import general.functions
 import general.views
-import org
 import json
 import uuid
 
@@ -1038,7 +1037,6 @@ def action_store_json(request):
         action = val.get('action', None)
         table = val.get('table', None)
         Store_id = content.get('Store_id', None)
-
 
         # 进行权限判断
         if general.functions.general_has_authority(request, '/store/'):

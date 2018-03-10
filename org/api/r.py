@@ -3,9 +3,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from general import models as general_models
 from org import models as org_models
 from org import views
-
 import general.functions
-import org
 import uuid
 import json
 
@@ -42,6 +40,7 @@ def user_profile(ret, content, *args, **kwargs):
     :param kwargs:
     :return:
     '''
+
     password = content.pop('password')
     password2 = content.pop('password2')
     User_id = content.pop('User_id')
@@ -175,6 +174,26 @@ def role_department_get(ret, content, *args, **kwargs):
     return views.action_get(ret, 'Role_Con_Department', content)
 
 
+def modify_content(action, content, Company_id):
+    '''
+
+    :param action:
+    :param content:
+    :param Company_id:
+    :return:
+    '''
+    if action.startswith('ZG-R-02-04'):
+        content['Role__Company_id'] = Company_id
+    elif action.startswith('ZG-R-04-04'):
+        content['Role__Company_id'] = Company_id
+    elif action.startswith('ZG-R-03-01'):
+        content['Company_id'] = Company_id
+    else:
+        pass
+
+    return content
+
+
 def ZG_R_Json(request):
     '''
     :param request:
@@ -196,14 +215,8 @@ def ZG_R_Json(request):
             if request.session['Account_Type'] == '1':
                 pass
             else:
-                if action.startswith('ZG-R-02-04'):
-                    content['Role__Company_id'] = request.session['Company_id']
-                elif action.startswith('ZG-R-04-04'):
-                    content['Role__Company_id'] = request.session['Company_id']
-                elif action.startswith('ZG-R-03-01'):
-                    content['Company_id'] = request.session['Company_id']
-            if action.startswith('ZG-R-01-03'):
-                content['User_id'] = request.session['User_id']
+                Company_id = request.session['Company_id']
+                content = modify_content(action, content, Company_id)
 
             try:
                 f = _registered_actions[action]

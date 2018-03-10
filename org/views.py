@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
 from rest_framework import viewsets
-from django.views import View
 from general.functions import general_has_authority
 from django.contrib.auth.decorators import login_required
 from org.serializers import *
@@ -394,7 +393,8 @@ def role_department(request):
 
 @login_required(login_url='/general/login/')
 def user_profile(request):
-    User_objs = org_models.User.objects.filter(id=request.session['User_id']).first()
+    User_id = request.session['User_id']
+    User_objs = org_models.User.objects.filter(id=User_id).first()
     return render(request, 'user_profile.html', {
         'User_objs': User_objs
 

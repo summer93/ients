@@ -53,20 +53,20 @@ def show_node(Head_id):
 
         # 循环所有的Leef
         for row in val:
-            x = {
+            arg = {
                 'id': row['Leef_id'],
                 'name': org_models.Department.objects.filter(id=row['Leef_id']).first().Name,
                 'pid': temp['id'],
                 'childrens': []
             }
             # 将Leef添加到Head的childrens里
-            temp['childrens'].append(x)
+            temp['childrens'].append(arg)
 
             # 判断该Leef是否存在childrens
             if org_models.Department_Con.objects.filter(Head_id=row['Leef_id']):
                 # 进行递归
                 val = org_models.Department_Con.objects.filter(Head_id=row['Leef_id']).values('Leef_id')
-                tree_traversal(x)
+                tree_traversal(arg)
 
     tree_traversal(temp)
     res = {'data': []}
@@ -536,6 +536,45 @@ def get_role(ret, content, *args, **kwargs):
     return views.action_get(ret, 'Role', content)
 
 
+def modify_content(action,content,Company_id):
+    '''
+
+    :param action:
+    :param content:
+    :param Company_id:
+    :return:
+    '''
+    if action.startswith('ZG-F-01'):
+
+        if action == 'ZG-F-01-04':
+
+            content['Department_id'] = org_models.Department.objects.filter(
+                Company__id=Company_id,
+                is_First=True
+            ).first().id
+        else:
+            pass
+
+    elif action.startswith('ZG-F-06'):
+        content['Company_id'] = Company_id
+    elif action.startswith('ZG-F-08'):
+        content['Company_id'] = Company_id
+
+    elif action == 'ZG-F-03-04':
+        content['Role__Company_id'] = Company_id
+
+    elif action == 'ZG-F-04-04':
+        content['Company_id'] = Company_id
+    elif action == 'ZG-F-05-04':
+        content['Department__Company_id'] = Company_id
+    else:
+        pass
+
+    return content
+
+
+
+
 
 def ZG_F_Json(request):
     '''
@@ -556,32 +595,8 @@ def ZG_F_Json(request):
             if request.session['Account_Type'] == '1':
                 pass
             else:
-                if action.startswith('ZG-F-01'):
-
-                    if action == 'ZG-F-01-04':
-
-                        content['Department_id'] = org_models.Department.objects.filter(
-                            Company__id=request.session['Company_id'],
-                            is_First=True
-                        ).first().id
-                    else:
-                        pass
-
-                elif action.startswith('ZG-F-06'):
-                    content['Company_id'] = request.session['Company_id']
-                elif action.startswith('ZG-F-08'):
-                    content['Company_id'] = request.session['Company_id']
-
-                elif action == 'ZG-F-03-04':
-                    content['Role__Company_id'] = request.session['Company_id']
-
-                elif action == 'ZG-F-04-04':
-                    content['Company_id'] = request.session['Company_id']
-                elif action == 'ZG-F-05-04':
-                    content['Department__Company_id'] = request.session['Company_id']
-                else:
-                    pass
-
+                Company_id = request.session['Company_id']
+                content = modify_content(action,content,Company_id)
             try:
 
                 f = _registered_actions[action]
